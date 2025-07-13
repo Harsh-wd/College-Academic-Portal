@@ -1,0 +1,45 @@
+/* Homepage.css */
+
+.container {
+    height: 100vh;
+    padding-left: 60px;
+    padding-right: 60px;
+    background-image: url('https://images.pexels.com/photos/3694362/pexels-photo-3694362.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
+    /* background-size: cover; */
+  }
+  
+  .paper {
+    padding: 35px;
+    background-color: rgba(249, 249, 249, 1); /* Adjust the opacity by changing the fourth value */
+    border-radius: 20px;
+    margin-top: 150px;
+    text-align: center;
+  }
+  
+  .title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    font-family: calibri;
+    color: #2c2143;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  .logo {
+    display: block;
+    margin: 0 auto;
+  }
+  
+  .button-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    margin-top: 20px;
+  }
+  
+  .signup-text {
+    color: black;
+    text-align: center;
+  }
+  
