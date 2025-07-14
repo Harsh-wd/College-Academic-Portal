@@ -16,12 +16,13 @@ mongoose.connect(process.env.MONGO_URI)
     .then(console.log("Connected to MongoDB"))
     .catch((err) => console.log("NOT CONNECTED TO NETWORK", err))
 
-app.use('/route', Routes);
-
-// Add this before app.listen
+ // Add this before app.listen
 app.get('/', (req, res) => {
   res.send("API is live 🚀");
-});
+});   
+app.use('/route', Routes);
+
+
 
 
 app.listen(3000, () => {
