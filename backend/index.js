@@ -18,6 +18,12 @@ mongoose.connect(process.env.MONGO_URI)
 
 app.use('/route', Routes);
 
+// Add this before app.listen
+app.get('/', (req, res) => {
+  res.send("API is live 🚀");
+});
+
+
 app.listen(3000, () => {
     console.log("Server started at port no.3000");
 })
