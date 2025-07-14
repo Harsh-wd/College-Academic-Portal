@@ -1,33 +1,40 @@
-const express = require("express")
-const cors = require("cors")
-const mongoose = require("mongoose")
-const dotenv = require("dotenv")
+const express = require("express");
+const cors = require("cors");
+const mongoose = require("mongoose");
+const dotenv = require("dotenv");
 
-const app = express()
-const Routes = require("./routes/route.js")
-const port =3000
+dotenv.config(); // Load .env variables
 
-dotenv.config();
+const app = express();
+const Routes = require("./routes/route.js");
 
-app.use(express.json({ limit: '10mb' }))
-app.use(cors())
+const port = process.env.PORT || 3000;
 
-mongoose.connect(process.env.MONGO_URI)
-    .then(console.log("Connected to MongoDB"))
-    .catch((err) => console.log("NOT CONNECTED TO NETWORK", err))
+app.use(express.json({ limit: '10mb' }));
+app.use(cors());
 
- // Add this before app.listen
-app.get('/', (req, res) => {
-  res.send("API is live 🚀");
-});   
+// Connect to MongoDB
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+}).then(() => {
+  console.log("Connected to MongoDB");
+}).catch((err) => {
+  console.log("NOT CONNECTED TO NETWORK", err);
+});
+
+// Routing
 app.use('/route', Routes);
 
+// Default API route
+app.get('/', (req, res) => {
+  res.send("API is live 🚀");
+});
 
-
-
-app.listen(3000, () => {
-    console.log("Server started at port no.3000");
-})
+// Start server
+app.listen(port, () => {
+  console.log(`Server started at port ${port}`);
+});
 
 // const express = require('express');
 // const cors = require('cors');
