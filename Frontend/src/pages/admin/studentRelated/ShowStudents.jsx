@@ -1,13 +1,11 @@
-import React,{ useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from "react-router-dom";
 import { getAllStudents } from '../../../redux/studentRelated/studentHandle.js';
 import { deleteUser } from '../../../redux/userRelated/userHandle.js';
-import {
-    Paper, Box, IconButton,Button
-} from '@mui/material';
+import { Paper, Box, IconButton, Button } from '@mui/material';
 import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
-import { BlueButton, GreenButton} from '../../../components/buttonStyles.js';
+import { BlueButton, GreenButton } from '../../../components/buttonStyles.js';
 import TableTemplate from '../../../components/TableTemplate.jsx';
 import Popup from '../../../components/Popup.jsx';
 import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
@@ -15,7 +13,7 @@ import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
 const ShowStudents = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const { studentsList, loading, error, response } = useSelector((state) => state.student);
+    const { studentsList, loading, error } = useSelector((state) => state.student);
     const { currentUser } = useSelector(state => state.user);
 
     useEffect(() => {
@@ -30,11 +28,8 @@ const ShowStudents = () => {
     const [message, setMessage] = React.useState("");
 
     const deleteHandler = (deleteID, address) => {
-        console.log(deleteID);
-        console.log(address);
-        setMessage("Deleted successfully, refresh the page");
+        setMessage("Deleted successfully");
         setShowPopup(true);
-
         dispatch(deleteUser(deleteID, address))
             .then(() => {
                 dispatch(getAllStudents(currentUser._id));
@@ -47,14 +42,12 @@ const ShowStudents = () => {
         { id: 'sclassName', label: 'Class', minWidth: 170 },
     ];
 
-    const studentRows = studentsList && studentsList.length > 0 && studentsList.map((student) => {
-        return {
-            name: student.name,
-            rollNum: student.rollNum,
-            sclassName: student.sclassName.sclassName,
-            id: student._id,
-        };
-    });
+    const studentRows = (studentsList || []).map((student) => ({
+        name: student.name,
+        rollNum: student.rollNum,
+        sclassName: student.sclassName.sclassName,
+        id: student._id,
+    }));
 
     const StudentButtonHaver = ({ row }) => (
         <>
@@ -82,7 +75,6 @@ const ShowStudents = () => {
                         >
                             Add New Student
                         </GreenButton>
-
                         <Button
                             variant="contained"
                             color="error"
@@ -93,8 +85,10 @@ const ShowStudents = () => {
                         </Button>
                     </Box>
                     <Paper sx={{ width: '100%', overflow: 'hidden', marginTop: '16px' }}>
-                        {Array.isArray(studentsList) && studentsList.length > 0 && (
+                        {studentRows.length > 0 ? (
                             <TableTemplate buttonHaver={StudentButtonHaver} columns={studentColumns} rows={studentRows} />
+                        ) : (
+                           <div>No Students Found</div>
                         )}
                     </Paper>
                 </>
