@@ -1,4 +1,4 @@
-import axios from 'axios';
+import { apiCall } from '../api';
 import {
     authRequest,
     stuffAdded,
@@ -15,39 +15,33 @@ import {
 
 export const loginUser = (fields, role) => async (dispatch) => {
     dispatch(authRequest());
-
     try {
-        const result = await axios.post(`${import.meta.env.VITE_BASE_URL}/${role}Login`, fields, {
-            headers: { 'Content-Type': 'application/json' },
-        });
-        if (result.data.role) {
-            dispatch(authSuccess(result.data));
+        const result = await apiCall('post', `/${role}Login`, fields);
+        if (result.role) {
+            dispatch(authSuccess(result));
         } else {
-            dispatch(authFailed(result.data.message));
+            dispatch(authFailed(result.message));
         }
     } catch (error) {
-        dispatch(authError(error));
+        dispatch(authError(error.message || 'An error occurred'));
     }
 };
 
 export const registerUser = (fields, role) => async (dispatch) => {
     dispatch(authRequest());
-
     try {
-        const result = await axios.post(`${import.meta.env.VITE_BASE_URL}/${role}Reg`, fields, {
-            headers: { 'Content-Type': 'application/json' },
-        });
-        if (result.data.schoolName) {
-            dispatch(authSuccess(result.data));
+        const result = await apiCall('post', `/${role}Reg`, fields);
+        if (result.schoolName) {
+            dispatch(authSuccess(result));
         }
-        else if (result.data.school) {
-            dispatch(stuffAdded());
+        else if (result.school) {
+            dispatch(stuffAdded(result));
         }
         else {
-            dispatch(authFailed(result.data.message));
+            dispatch(authFailed(result.message));
         }
     } catch (error) {
-        dispatch(authError(error));
+        dispatch(authError(error.message || 'An error occurred'));
     }
 };
 
@@ -57,67 +51,55 @@ export const logoutUser = () => (dispatch) => {
 
 export const getUserDetails = (id, address) => async (dispatch) => {
     dispatch(getRequest());
-
     try {
-        const result = await axios.get(`${import.meta.env.VITE_BASE_URL}/${address}/${id}`);
-        if (result.data) {
-            dispatch(doneSuccess(result.data));
+        const result = await apiCall('get', `/${address}/${id}`);
+        if (result) {
+            dispatch(doneSuccess(result));
         }
     } catch (error) {
-        dispatch(getError(error));
+        dispatch(getError(error.message || 'An error occurred'));
     }
 }
 
 export const deleteUser = (id, address) => async (dispatch) => {
     dispatch(getRequest());
-
     try {
-        const result = await axios.delete(`${import.meta.env.VITE_BASE_URL}/${address}/${id}`);
-        if (result.data.message) {
-            dispatch(getFailed(result.data.message));
+        const result = await apiCall('delete', `/${address}/${id}`);
+        if (result.message) {
+            dispatch(getFailed(result.message));
         } else {
             dispatch(getDeleteSuccess());
         }
     } catch (error) {
-        dispatch(getError(error));
+        dispatch(getError(error.message || 'An error occurred'));
     }
 }
 
-
-
-
 export const updateUser = (fields, id, address) => async (dispatch) => {
     dispatch(getRequest());
-
     try {
-        const result = await axios.put(`${import.meta.env.VITE_BASE_URL}/${address}/${id}`, fields, {
-            headers: { 'Content-Type': 'application/json' },
-        });
-        if (result.data.schoolName) {
-            dispatch(authSuccess(result.data));
+        const result = await apiCall('put', `/${address}/${id}`, fields);
+        if (result.schoolName) {
+            dispatch(authSuccess(result));
         }
         else {
-            dispatch(doneSuccess(result.data));
+            dispatch(doneSuccess(result));
         }
     } catch (error) {
-        dispatch(getError(error));
+        dispatch(getError(error.message || 'An error occurred'));
     }
 }
 
 export const addStuff = (fields, address) => async (dispatch) => {
     dispatch(authRequest());
-
     try {
-        const result = await axios.post(`${import.meta.env.VITE_BASE_URL}/${address}Create`, fields, {
-            headers: { 'Content-Type': 'application/json' },
-        });
-
-        if (result.data.message) {
-            dispatch(authFailed(result.data.message));
+        const result = await apiCall('post', `/${address}Create`, fields);
+        if (result.message) {
+            dispatch(authFailed(result.message));
         } else {
-            dispatch(stuffAdded(result.data));
+            dispatch(stuffAdded(result));
         }
     } catch (error) {
-        dispatch(authError(error));
+        dispatch(authError(error.message || 'An error occurred'));
     }
 };
