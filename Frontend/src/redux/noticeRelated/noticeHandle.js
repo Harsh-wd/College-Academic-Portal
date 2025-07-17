@@ -1,4 +1,4 @@
-import axios from 'axios';
+import { apiCall } from '../api';
 import {
     getRequest,
     getSuccess,
@@ -8,15 +8,14 @@ import {
 
 export const getAllNotices = (id, address) => async (dispatch) => {
     dispatch(getRequest());
-
     try {
-        const result = await axios.get(`${import.meta.env.VITE_BASE_URL}/${address}List/${id}`);
-        if (result.data.message) {
-            dispatch(getFailed(result.data.message));
+        const result = await apiCall('get', `/${address}List/${id}`);
+        if (result.message) {
+            dispatch(getFailed(result.message));
         } else {
-            dispatch(getSuccess(result.data));
+            dispatch(getSuccess(result));
         }
     } catch (error) {
-        dispatch(getError(error));
+        dispatch(getError(error.message || 'An error occurred'));
     }
 }
