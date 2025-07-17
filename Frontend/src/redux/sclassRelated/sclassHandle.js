@@ -1,4 +1,4 @@
-import axios from 'axios';
+import { apiCall } from '../api';
 import {
     getRequest,
     getSuccess,
@@ -14,86 +14,80 @@ import {
 
 export const getAllSclasses = (id, address) => async (dispatch) => {
     dispatch(getRequest());
-
     try {
-        const result = await axios.get(`${import.meta.env.VITE_BASE_URL}/${address}List/${id}`);
-        if (result.data.message) {
-            dispatch(getFailedTwo(result.data.message));
+        const result = await apiCall('get', `/${address}List/${id}`);
+        if (result.message) {
+            dispatch(getFailedTwo(result.message));
         } else {
-            dispatch(getSuccess(result.data));
+            dispatch(getSuccess(result));
         }
     } catch (error) {
-        dispatch(getError(error));
+        dispatch(getError(error.message || 'An error occurred'));
     }
 }
 
 export const getClassStudents = (id) => async (dispatch) => {
     dispatch(getRequest());
-
     try {
-        const result = await axios.get(`${import.meta.env.VITE_BASE_URL}/Sclass/Students/${id}`);
-        if (result.data.message) {
-            dispatch(getFailedTwo(result.data.message));
+        const result = await apiCall('get', `/Sclass/Students/${id}`);
+        if (result.message) {
+            dispatch(getFailedTwo(result.message));
         } else {
-            dispatch(getStudentsSuccess(result.data));
+            dispatch(getStudentsSuccess(result));
         }
     } catch (error) {
-        dispatch(getError(error));
+        dispatch(getError(error.message || 'An error occurred'));
     }
 }
 
 export const getClassDetails = (id, address) => async (dispatch) => {
     dispatch(getRequest());
-
     try {
-        const result = await axios.get(`${import.meta.env.VITE_BASE_URL}/${address}/${id}`);
-        if (result.data) {
-            dispatch(detailsSuccess(result.data));
+        const result = await apiCall('get', `/${address}/${id}`);
+        if (result) {
+            dispatch(detailsSuccess(result));
         }
     } catch (error) {
-        dispatch(getError(error));
+        dispatch(getError(error.message || 'An error occurred'));
     }
 }
 
 export const getSubjectList = (id, address) => async (dispatch) => {
     dispatch(getRequest());
-
     try {
-        const result = await axios.get(`${import.meta.env.VITE_BASE_URL}/${address}/${id}`);
-        if (result.data.message) {
-            dispatch(getFailed(result.data.message));
+        const result = await apiCall('get', `/${address}/${id}`);
+        if (result.message) {
+            dispatch(getFailed(result.message));
         } else {
-            dispatch(getSubjectsSuccess(result.data));
+            dispatch(getSubjectsSuccess(result));
         }
     } catch (error) {
-        dispatch(getError(error));
+        dispatch(getError(error.message || 'An error occurred'));
     }
 }
 
 export const getTeacherFreeClassSubjects = (id) => async (dispatch) => {
     dispatch(getRequest());
-
     try {
-        const result = await axios.get(`${import.meta.env.VITE_BASE_URL}/FreeSubjectList/${id}`);
-        if (result.data.message) {
-            dispatch(getFailed(result.data.message));
+        const result = await apiCall('get', `/FreeSubjectList/${id}`);
+        if (result.message) {
+            dispatch(getFailed(result.message));
         } else {
-            dispatch(getSubjectsSuccess(result.data));
+            dispatch(getSubjectsSuccess(result));
         }
     } catch (error) {
-        dispatch(getError(error));
+        dispatch(getError(error.message || 'An error occurred'));
     }
 }
 
 export const getSubjectDetails = (id, address) => async (dispatch) => {
     dispatch(getSubDetailsRequest());
-
     try {
-        const result = await axios.get(`${import.meta.env.VITE_BASE_URL}/${address}/${id}`);
-        if (result.data) {
-            dispatch(getSubDetailsSuccess(result.data));
+        const result = await apiCall('get', `/${address}/${id}`);
+        if (result) {
+            dispatch(getSubDetailsSuccess(result));
         }
     } catch (error) {
-        dispatch(getError(error));
+        dispatch(getError(error.message || 'An error occurred'));
     }
 }
