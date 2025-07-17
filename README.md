@@ -1,42 +1,32 @@
-# College-Academic-Portal
--> This repository contains files for a College/School Management System based on MERN stack
+College-Academic-Portal
+This repository contains the source code for a College/School Management System built with the MERN stack (MongoDB, Express, React, Node.js).
 
-->Features provided by roles
+Features
+The application supports three user roles: Admin, Teacher, and Student.
 
-Admin:
+Admin
+Create, view, and delete classes and subjects.
 
-->Create/Delete Classes.
+Add, view, and remove students and teachers.
 
-->Create/Delete Subjects.
+Manage student marks and attendance.
 
-->Add/Remove students from classes and Subjects.
+Post notices visible to all users.
 
-->Post Notices visible to Students and Teachers.
+Teacher
+View assigned class and students.
 
-->Can add, change and view marks, attendance of Student.
+Add, change, and view marks and attendance for their subject.
 
-Teacher:
+View notices.
 
-Can add, change and view marks, attendance of Student.
+Student
+View enrolled subjects and marks.
 
-Student:
+View attendance records.
 
-Can view subjects and marks.
+View notices.
 
-To use the Web App, follow the below steps:
+Local Development Setup
+Follow the instructions in the Project-Setup-Instructions.md file to set up and run the project on your local machine.
 
-A. Go to terminal with the project directory and type
-
-cd frontend 
-
-npm run dev
-
-B. Open another terminal with the project directory and type
-
-cd backend 
-
-npm start
-
-[Starts MongoDB service]
-
-->Also, replace the MongoDB URL from the .env file to your own MongoDB connection URL.
