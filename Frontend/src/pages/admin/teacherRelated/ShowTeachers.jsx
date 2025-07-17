@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { getAllTeachers } from '../../../redux/teacherRelated/teacherHandle.js';
 import {
     Paper, Table, TableBody, TableContainer,
-    TableHead, TablePagination, Button, Box, IconButton,
+    TableHead, TablePagination, Button, Box, IconButton, Typography,
 } from '@mui/material';
 import { deleteUser } from '../../../redux/userRelated/userHandle.js';
 import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
@@ -21,24 +21,20 @@ const ShowTeachers = () => {
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const { teachersList, loading, error, response } = useSelector((state) => state.teacher);
+    const { teachersList, loading } = useSelector((state) => state.teacher);
     const { currentUser } = useSelector((state) => state.user);
 
     useEffect(() => {
         dispatch(getAllTeachers(currentUser._id));
     }, [currentUser._id, dispatch]);
-    
 
     const deleteHandler = (deleteID, address) => {
-        console.log(deleteID);
-        console.log(address);
-        setMessage("Deleted successfully, refresh the page");
+        setMessage("Deleted successfully");
         setShowPopup(true);
-        // Dispatch deleteUser action
         dispatch(deleteUser(deleteID, address))
-        .then(() => {
-            dispatch(getAllTeachers(currentUser._id));
-        });
+            .then(() => {
+                dispatch(getAllTeachers(currentUser._id));
+            });
     };
 
     const columns = [
@@ -47,19 +43,16 @@ const ShowTeachers = () => {
         { id: 'teachSclass', label: 'Class', minWidth: 170 },
     ];
 
-    const rows = teachersList.map((teacher) => {
-        return {
-            name: teacher.name,
-            teachSubject: teacher.teachSubject?.subName || null,
-            teachSclass: teacher.teachSclass.sclassName,
-            teachSclassID: teacher.teachSclass._id,
-            id: teacher._id,
-        };
-    });
+    const rows = (teachersList || []).map((teacher) => ({
+        name: teacher.name,
+        teachSubject: teacher.teachSubject?.subName || null,
+        teachSclass: teacher.teachSclass.sclassName,
+        teachSclassID: teacher.teachSclass._id,
+        id: teacher._id,
+    }));
 
     return (
         <Paper sx={{ width: '100%', overflow: 'hidden', padding: 2 }}>
-            {/* Buttons for "Add New Teacher" and "Delete All Teachers" */}
             <Box sx={{ display: 'flex', justifyContent: 'space-between', marginBottom: 2 }}>
                 <GreenButton
                     variant="contained"
@@ -77,82 +70,87 @@ const ShowTeachers = () => {
                     Delete All Teachers
                 </Button>
             </Box>
-
-            <TableContainer>
-                <Table stickyHeader aria-label="sticky table">
-                    <TableHead>
-                        <StyledTableRow>
-                            {columns.map((column) => (
-                                <StyledTableCell
-                                    key={column.id}
-                                    align={column.align}
-                                    style={{ minWidth: column.minWidth }}
-                                >
-                                    {column.label}
-                                </StyledTableCell>
-                            ))}
-                            <StyledTableCell align="center">Actions</StyledTableCell>
-                        </StyledTableRow>
-                    </TableHead>
-                    <TableBody>
-                        {rows
-                            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                            .map((row) => (
-                                <StyledTableRow hover role="checkbox" tabIndex={-1} key={row.id}>
-                                    {columns.map((column) => {
-                                        const value = row[column.id];
-                                        if (column.id === 'teachSubject') {
-                                            return (
-                                                <StyledTableCell key={column.id} align={column.align}>
-                                                    {value ? (
-                                                        value
-                                                    ) : (
-                                                        <Button
-                                                            variant="contained"
-                                                            onClick={() => navigate(`/Admin/teachers/choosesubject/${row.teachSclassID}/${row.id}`)}
-                                                        >
-                                                            Add Subject
-                                                        </Button>
-                                                    )}
-                                                </StyledTableCell>
-                                            );
-                                        }
-                                        return (
-                                            <StyledTableCell key={column.id} align={column.align}>
-                                                {column.format && typeof value === 'number' ? column.format(value) : value}
-                                            </StyledTableCell>
-                                        );
-                                    })}
-                                    <StyledTableCell align="center">
-                                        <IconButton onClick={() => deleteHandler(row.id, "Teacher")}>
-                                            <PersonRemoveIcon color="error" />
-                                        </IconButton>
-                                        <BlueButton
-                                            variant="contained"
-                                            onClick={() => navigate("/Admin/teachers/teacher/" + row.id)}
+            {loading ? (
+                <Typography>Loading...</Typography>
+            ) : rows.length > 0 ? (
+                <>
+                    <TableContainer>
+                        <Table stickyHeader aria-label="sticky table">
+                            <TableHead>
+                                <StyledTableRow>
+                                    {columns.map((column) => (
+                                        <StyledTableCell
+                                            key={column.id}
+                                            align={column.align}
+                                            style={{ minWidth: column.minWidth }}
                                         >
-                                            View
-                                        </BlueButton>
-                                    </StyledTableCell>
+                                            {column.label}
+                                        </StyledTableCell>
+                                    ))}
+                                    <StyledTableCell align="center">Actions</StyledTableCell>
                                 </StyledTableRow>
-                            ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
-            <TablePagination
-                rowsPerPageOptions={[5, 10, 25, 100]}
-                component="div"
-                count={rows.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                onPageChange={(event, newPage) => setPage(newPage)}
-                onRowsPerPageChange={(event) => {
-                    setRowsPerPage(parseInt(event.target.value, 10));
-                    setPage(0);
-                }}
-            />
-
-            {/* Popup for Delete Notification */}
+                            </TableHead>
+                            <TableBody>
+                                {rows
+                                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                    .map((row) => (
+                                        <StyledTableRow hover role="checkbox" tabIndex={-1} key={row.id}>
+                                            {columns.map((column) => {
+                                                const value = row[column.id];
+                                                if (column.id === 'teachSubject') {
+                                                    return (
+                                                        <StyledTableCell key={column.id} align={column.align}>
+                                                            {value ? (
+                                                                value
+                                                            ) : (
+                                                                <Button
+                                                                    variant="contained"
+                                                                    onClick={() => navigate(`/Admin/teachers/choosesubject/${row.teachSclassID}/${row.id}`)}
+                                                                >
+                                                                    Add Subject
+                                                                </Button>
+                                                            )}
+                                                        </StyledTableCell>
+                                                    );
+                                                }
+                                                return (
+                                                    <StyledTableCell key={column.id} align={column.align}>
+                                                        {column.format && typeof value === 'number' ? column.format(value) : value}
+                                                    </StyledTableCell>
+                                                );
+                                            })}
+                                            <StyledTableCell align="center">
+                                                <IconButton onClick={() => deleteHandler(row.id, "Teacher")}>
+                                                    <PersonRemoveIcon color="error" />
+                                                </IconButton>
+                                                <BlueButton
+                                                    variant="contained"
+                                                    onClick={() => navigate("/Admin/teachers/teacher/" + row.id)}
+                                                >
+                                                    View
+                                                </BlueButton>
+                                            </StyledTableCell>
+                                        </StyledTableRow>
+                                    ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                    <TablePagination
+                        rowsPerPageOptions={[5, 10, 25, 100]}
+                        component="div"
+                        count={rows.length}
+                        rowsPerPage={rowsPerPage}
+                        page={page}
+                        onPageChange={(event, newPage) => setPage(newPage)}
+                        onRowsPerPageChange={(event) => {
+                            setRowsPerPage(parseInt(event.target.value, 10));
+                            setPage(0);
+                        }}
+                    />
+                </>
+            ) : (
+                <Typography>No teachers found.</Typography>
+            )}
             <Popup message={message} setShowPopup={setShowPopup} showPopup={showPopup} />
         </Paper>
     );
