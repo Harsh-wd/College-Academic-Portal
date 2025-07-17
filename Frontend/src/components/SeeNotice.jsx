@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react'
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllNotices } from '../redux/noticeRelated/noticeHandle.js';
-import { Paper } from '@mui/material';
-import TableViewTemplate from './TableViewTemplate.jsx';
+import { Paper, Typography } from '@mui/material';
+import TableTemplate from './TableTemplate.jsx'; // Corrected import
 
 const SeeNotice = () => {
     const dispatch = useDispatch();
@@ -14,10 +14,10 @@ const SeeNotice = () => {
         if (currentRole === "Admin") {
             dispatch(getAllNotices(currentUser._id, "Notice"));
         }
-        else {
+        else if (currentUser.school) {
             dispatch(getAllNotices(currentUser.school._id, "Notice"));
         }
-    }, [dispatch]);
+    }, [dispatch, currentUser, currentRole]);
 
     if (error) {
         console.log(error);
@@ -29,7 +29,7 @@ const SeeNotice = () => {
         { id: 'date', label: 'Date', minWidth: 170 },
     ];
 
-    const noticeRows = noticesList.map((notice) => {
+    const noticeRows = noticesList && noticesList.length > 0 ? noticesList.map((notice) => {
         const date = new Date(notice.date);
         const dateString = date.toString() !== "Invalid Date" ? date.toISOString().substring(0, 10) : "Invalid Date";
         return {
@@ -38,26 +38,26 @@ const SeeNotice = () => {
             date: dateString,
             id: notice._id,
         };
-    });
+    }) : [];
+
     return (
         <div style={{ marginTop: '50px', marginRight: '20px' }}>
             {loading ? (
-                <div style={{ fontSize: '20px' }}>Loading...</div>
+                <Typography>Loading...</Typography>
             ) : response ? (
-                <div style={{ fontSize: '20px' }}>No Notices to Show Right Now</div>
+                <Typography variant="h6" sx={{ textAlign: 'center', mt: 4 }}>No Notices to Show Right Now</Typography>
             ) : (
                 <>
-                    <h3 style={{ fontSize: '30px', marginBottom: '40px' }}>Notices</h3>
+                    <Typography variant="h4" sx={{ textAlign: 'center', mb: 4 }}>Notices</Typography>
                     <Paper sx={{ width: '100%', overflow: 'hidden' }}>
                         {Array.isArray(noticesList) && noticesList.length > 0 &&
-                            <TableViewTemplate columns={noticeColumns} rows={noticeRows} />
+                            <TableTemplate columns={noticeColumns} rows={noticeRows} />
                         }
                     </Paper>
                 </>
             )}
         </div>
-
-    )
+    );
 }
 
-export default SeeNotice
+export default SeeNotice;
