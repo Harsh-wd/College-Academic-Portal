@@ -3,7 +3,7 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 
-dotenv.config(); // Load .env variables
+dotenv.config();
 
 const app = express();
 const Routes = require("./routes/route.js");
@@ -11,14 +11,8 @@ const Routes = require("./routes/route.js");
 const port = process.env.PORT || 5000;
 
 app.use(express.json({ limit: '10mb' }));
+app.use(cors());
 
-// More robust CORS configuration for Vercel deployment
-app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173', // Default to common Vite dev port
-  credentials: true,
-}));
-
-// Connect to MongoDB
 mongoose.connect(process.env.MONGO_URL, {
   useNewUrlParser: true,
   useUnifiedTopology: true
@@ -28,22 +22,16 @@ mongoose.connect(process.env.MONGO_URL, {
   console.log("NOT CONNECTED TO NETWORK", err);
 });
 
-// Use a more standard /api prefix for all routes
-app.use('/api', Routes);
+// The change is here: We remove the '/api' prefix.
+// Vercel's routing already handles the /api part.
+app.use('/', Routes);
 
-// Default API route for health check
-app.get('/', (req, res) => {
-  res.send("API is live 🚀");
-});
-
-// Global error handler
-app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).send('Something broke!');
+// Health check for the root of the serverless function
+app.get('/api', (req, res) => {
+  res.send("Backend API is live 🚀");
 });
 
 
-// Start server
 app.listen(port, () => {
   console.log(`Server started at port ${port}`);
 });
