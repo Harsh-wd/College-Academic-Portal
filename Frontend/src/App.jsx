@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 // Imports necessary components from react-router-dom for handling routing in the application.
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 //Imports the useSelector hook from react-redux, which allows components to extract data from the Redux store.
