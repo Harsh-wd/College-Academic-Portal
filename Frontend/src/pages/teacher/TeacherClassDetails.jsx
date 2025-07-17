@@ -10,13 +10,14 @@ import TableTemplate from "../../components/TableTemplate.jsx";
 const TeacherClassDetails = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const { sclassStudents, loading, error, getresponse } = useSelector((state) => state.sclass);
-
+    const { sclassStudents, loading, error } = useSelector((state) => state.sclass);
     const { currentUser } = useSelector((state) => state.user);
     const classID = currentUser.teachSclass?._id;
 
     useEffect(() => {
-        dispatch(getClassStudents(classID));
+        if (classID) {
+            dispatch(getClassStudents(classID));
+        }
     }, [dispatch, classID]);
 
     if (error) {
@@ -28,7 +29,7 @@ const TeacherClassDetails = () => {
         { id: 'rollNum', label: 'Roll Number', minWidth: 100 },
     ];
 
-    const studentRows = sclassStudents.map((student) => ({
+    const studentRows = (sclassStudents || []).map((student) => ({
         name: student.name,
         rollNum: student.rollNum,
         id: student._id,
@@ -50,26 +51,23 @@ const TeacherClassDetails = () => {
             {loading ? (
                 <div>Loading...</div>
             ) : (
-                <>
+                <Paper sx={{ width: '100%', overflow: 'hidden', p: 2 }}>
                     <Typography variant="h4" align="center" gutterBottom>
                         Class Details
                     </Typography>
-                    {getresponse ? (
-                        <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginTop: '16px' }}>
-                            No Students Found
-                        </Box>
-                    ) : (
-                        <Paper sx={{ width: '100%', overflow: 'hidden' }}>
+                    {studentRows.length > 0 ? (
+                        <>
                             <Typography variant="h5" gutterBottom>
                                 Students List:
                             </Typography>
-
-                            {Array.isArray(sclassStudents) && sclassStudents.length > 0 &&
-                                <TableTemplate buttonHaver={StudentsButtonHaver} columns={studentColumns} rows={studentRows} />
-                            }
-                        </Paper>
+                            <TableTemplate buttonHaver={StudentsButtonHaver} columns={studentColumns} rows={studentRows} />
+                        </>
+                    ) : (
+                        <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '16px' }}>
+                            <Typography variant="h6">No Students Found</Typography>
+                        </Box>
                     )}
-                </>
+                </Paper>
             )}
         </>
     );
