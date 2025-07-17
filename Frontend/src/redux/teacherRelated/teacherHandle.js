@@ -1,4 +1,4 @@
-import axios from 'axios';
+import { apiCall } from '../api';
 import {
     getRequest,
     getSuccess,
@@ -10,41 +10,36 @@ import {
 
 export const getAllTeachers = (id) => async (dispatch) => {
     dispatch(getRequest());
-
     try {
-        const result = await axios.get(`${import.meta.env.VITE_BASE_URL}/Teachers/${id}`);
-        if (result.data.message) {
-            dispatch(getFailed(result.data.message));
+        const result = await apiCall('get', `/Teachers/${id}`);
+        if (result.message) {
+            dispatch(getFailed(result.message));
         } else {
-            dispatch(getSuccess(result.data));
+            dispatch(getSuccess(result));
         }
     } catch (error) {
-        dispatch(getError(error));
+        dispatch(getError(error.message || 'An error occurred'));
     }
 }
 
 export const getTeacherDetails = (id) => async (dispatch) => {
     dispatch(getRequest());
-
     try {
-        const result = await axios.get(`${import.meta.env.VITE_BASE_URL}/Teacher/${id}`);
-        if (result.data) {
-            dispatch(doneSuccess(result.data));
+        const result = await apiCall('get', `/Teacher/${id}`);
+        if (result) {
+            dispatch(doneSuccess(result));
         }
     } catch (error) {
-        dispatch(getError(error));
+        dispatch(getError(error.message || 'An error occurred'));
     }
 }
 
 export const updateTeachSubject = (teacherId, teachSubject) => async (dispatch) => {
     dispatch(getRequest());
-
     try {
-        await axios.put(`${import.meta.env.VITE_BASE_URL}/TeacherSubject`, { teacherId, teachSubject }, {
-            headers: { 'Content-Type': 'application/json' },
-        });
+        await apiCall('put', `/TeacherSubject`, { teacherId, teachSubject });
         dispatch(postDone());
     } catch (error) {
-        dispatch(getError(error));
+        dispatch(getError(error.message || 'An error occurred'));
     }
 }
